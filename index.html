@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b6b50">
+<meta name="description" content="জন্মতারিখ থেকে সঠিক বয়স (বছর-মাস-দিন) হিসাব করুন এবং সরকারি-বেসরকারি চাকরির বয়সসীমা যাচাই করুন।">
+<title>বয়স ক্যালকুলেটর | Job Circular & Apply</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Serif+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--green:#087653;--green-dark:#07583f;--ink:#172b25;--muted:#718078;--line:#e3ece7;--bg:#f3f8f5;--red:#e52435}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg) linear-gradient(180deg,#dff1e7 0,#f3f8f5 280px) no-repeat;color:var(--ink);font-family:"Hind Siliguri",sans-serif;line-height:1.65}
+button,input,select{font:inherit}
+.page{max-width:850px;margin:0 auto;padding:7px 16px 32px}
+header{text-align:center;padding:5px 10px 12px}
+.brand{display:inline-flex;align-items:center;gap:9px;color:var(--green-dark);font-weight:800;font-size:19px;text-decoration:none}
+.brand-mark{width:42px;height:36px;border-radius:11px;background:#ff0033;color:white;display:grid;place-items:center}.brand-mark svg{width:25px;height:25px}
+header h1{font-size:clamp(25px,5vw,34px);margin:6px 0 2px;color:#123d2e}
+header p{margin:0;color:var(--muted);font-size:14px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:clamp(17px,4vw,28px);box-shadow:0 8px 30px #143e2a0a}
+.section-title{font-size:19px;font-weight:800;color:var(--green-dark);margin:0 0 18px;text-align:center}
+.field-label{display:block;font-size:14px;font-weight:700;margin-bottom:8px}
+.date-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+select,.readonly-date{width:100%;min-height:48px;border:1px solid #d6e3dc;border-radius:10px;padding:9px 10px;background:#fff;color:#233b31;outline:none}
+select:focus,input:focus{border-color:var(--green);box-shadow:0 0 0 3px #08765318}
+.readonly-date{display:flex;align-items:center;background:#f6faf7;color:#42584e;font-weight:600}
+.option-line{display:flex;align-items:flex-start;gap:9px;color:#617269;font-size:13px;margin:13px 0 17px}
+.option-line input{accent-color:var(--green);margin-top:5px;width:16px;height:16px}
+.option-line strong{color:#4b6257;font-weight:600}
+.optional-box{border:1px dashed #cbded2;background:#f9fcfa;border-radius:13px;padding:15px;margin-top:20px}
+.optional-head{display:flex;align-items:center;gap:10px;color:#52675c;font-size:13px;cursor:pointer}
+.optional-head input{accent-color:var(--green);margin:0;width:18px;height:18px;flex:none}
+.optional-head strong{font-size:14px;color:#375448}
+.job-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}.job-fields input{margin-bottom:2px}
+input[type=number],.age-input{width:100%;height:47px;border:1px solid #d6e3dc;border-radius:10px;padding:8px 12px;outline:none}
+.hint{font-size:11px;color:#8a9991;margin-top:5px}
+.actions{display:grid;grid-template-columns:1.2fr 1fr .8fr;gap:10px;margin-top:22px}
+.btn{border:0;border-radius:11px;padding:12px 10px;min-height:48px;font-weight:700;cursor:pointer;transition:.15s}
+.btn:active{transform:scale(.98)}
+.primary{background:var(--green);color:white}.primary:hover{background:var(--green-dark)}
+.secondary{background:#eaf4ee;color:var(--green-dark)}.reset{background:#fff0f0;color:#b4232d;border:1px solid #e9aeb3;font-weight:800;box-shadow:0 2px 7px #b4232d14}
+.result{display:none;margin-top:22px;border:1px solid #d7e9de;border-radius:15px;overflow:hidden}
+.result.show{display:block}
+.result-top{background:linear-gradient(120deg,#eaf7ef,#f5fbf7);padding:18px;text-align:center}
+.result-top .small{font-size:13px;color:#557064}
+.age{font-size:clamp(27px,6vw,36px);font-weight:800;color:#086345;margin-top:4px}
+.result-body{padding:16px}
+.job-result{margin-top:14px;padding:13px;border-radius:11px;background:#fff8e9;border:1px solid #f2e5c6;font-size:13px}
+.job-result.ok{background:#eff9f2;border-color:#d8ebdd;color:#176b43}
+.job-result.bad{background:#fff0f0;border-color:#f0b9bd;color:#bd202b}
+.job-result.wait{background:#fff8e9;border-color:#f2d9a0;color:#8a5a00}
+.error{display:none;color:#bd2834;background:#fff1f1;border:1px solid #f2d4d6;border-radius:9px;padding:10px;margin-top:12px;font-size:13px}
+.error.show{display:block}
+.subscribe-row{display:flex;align-items:center;justify-content:center;gap:8px}.contact-wrap{position:relative;display:inline-flex;justify-content:center;margin:0}
+.contact-main{border:0;border-radius:50px;background:#173d30;color:#fff;padding:13px;display:flex;gap:9px;align-items:center;font-weight:700;cursor:pointer}
+.help-button{position:relative;width:46px;height:39px;justify-content:center;padding:0;border-radius:9px;background:linear-gradient(145deg,#1f7a5c,#0d3d2e);color:#fff;flex:none;box-shadow:0 4px 12px #0d3d2e40,inset 0 1px 0 #ffffff30;transition:transform .2s,box-shadow .2s,background .2s}
+.help-button svg{width:26px;height:26px;display:block}
+.help-button::after{content:"";position:absolute;top:-3px;right:-3px;width:11px;height:11px;border-radius:50%;background:#25d366;border:2px solid #fff}
+.help-button:hover{transform:translateY(-2px);box-shadow:0 8px 18px #0d3d2e50,inset 0 1px 0 #ffffff30}
+.help-button:active{transform:scale(.95)}
+.help-button[aria-expanded="true"]{background:linear-gradient(145deg,#16a05f,#087653)}
+.contact-menu{display:none;position:absolute;z-index:5;top:calc(100% + 12px);left:50%;transform:translateX(-50%);width:min(260px,90vw);background:#fff;border:1px solid var(--line);border-radius:16px;padding:8px;box-shadow:0 14px 38px #153e2c28;text-align:left}
+.contact-menu::before{content:"";position:absolute;top:-7px;left:50%;width:12px;height:12px;background:#fff;border-left:1px solid var(--line);border-top:1px solid var(--line);transform:translateX(-50%) rotate(45deg)}
+.contact-menu.open{display:block;animation:menuPop .22s ease-out}
+@keyframes menuPop{from{opacity:0;transform:translateX(-50%) translateY(-8px) scale(.96)}to{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}}
+.menu-title{font-size:12px;font-weight:700;color:#7a8a81;padding:6px 10px 8px;border-bottom:1px solid var(--line);margin-bottom:5px}
+.contact-menu a{display:flex;align-items:center;gap:12px;padding:10px;border-radius:9px;color:#263c32;text-decoration:none;font-size:14px;font-weight:600}
+.contact-menu a:hover{background:#f3f8f5}
+.social-icon{width:30px;height:30px;display:grid;place-items:center;flex:none}
+.social-icon svg{width:27px;height:27px}
+.promo{text-align:center;background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 15px}
+.service-card{margin:25px 0 18px;background:linear-gradient(135deg,#e7f6ed,#f7fcf8);border:2px solid #9bcdb0;border-radius:18px;padding:22px 18px;text-align:center;box-shadow:0 8px 24px #0b694a12}
+.service-kicker{display:inline-block;background:#d0edda;color:#07583f;padding:5px 12px;border-radius:30px;font-size:12px;font-weight:800}
+.service-card h2{font-size:clamp(20px,4vw,25px);line-height:1.5;color:#07583f;margin:12px 0 7px}
+.service-card p{margin:0 auto 16px;max-width:560px;color:#496257;font-size:14px}
+.service-cta{display:inline-flex;align-items:center;justify-content:center;gap:9px;background:#128c50;color:#fff;text-decoration:none;padding:13px 17px;border-radius:11px;font-size:15px;font-weight:800;box-shadow:0 4px 12px #128c5030}
+.service-cta svg{width:23px;height:23px;flex:none}
+@media(max-width:520px){.service-card{padding:19px 14px}.service-cta{font-size:13px;padding:12px 13px}}
+.promo p{margin:0 0 12px;font-weight:700;color:#345448}
+.subscribe{display:inline-block;background:var(--red);color:#fff;text-decoration:none;padding:8px 21px;border-radius:7px;font-size:14px;font-weight:800}
+.service{margin-top:13px;text-align:center;font-size:13px;color:#607168}
+.service a{color:#087653;font-weight:800;text-decoration:none}
+footer{text-align:center;color:#91a097;font-size:11px;margin-top:19px}
+.collapse{display:grid;grid-template-rows:1fr;transition:grid-template-rows .45s ease}
+.collapse>div{min-height:0;overflow:hidden;transition:opacity .35s ease,visibility .45s}
+.collapse.closed{grid-template-rows:0fr}
+.collapse.closed>div{opacity:0;visibility:hidden}
+.asof-row{display:flex;align-items:flex-start;gap:14px}
+.asof-main{flex:1;min-width:0}
+.switch-wrap{position:relative;display:flex;align-items:center;gap:10px;min-height:48px;flex:none;max-width:205px;cursor:pointer;user-select:none;font-size:12.5px;font-weight:700;line-height:1.4;color:var(--green-dark)}
+.switch-wrap input{position:absolute;opacity:0;width:0;height:0}
+.switch{position:relative;width:46px;height:26px;border-radius:30px;background:#c9d7cf;flex:none;transition:background .3s}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 2px 5px #0003;transition:transform .3s cubic-bezier(.4,1.5,.6,1)}
+.switch-wrap input:checked+.switch{background:var(--green)}
+.switch-wrap input:checked+.switch::after{transform:translateX(20px)}
+.switch-wrap input:focus-visible+.switch{box-shadow:0 0 0 3px #08765330}
+.detail-toggle{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;margin:14px 0 0;padding:11px;border:1px solid #cfe4d7;border-radius:11px;background:#f3faf6;color:var(--green-dark);font-weight:700;cursor:pointer;transition:background .2s}
+.detail-toggle:hover{background:#e7f5ed}
+.detail-toggle .arrow{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#fff;border:1px solid #bfdccb;box-shadow:0 2px 6px #07583f1f;transition:transform .4s,background .2s,border-color .2s}
+.detail-toggle .arrow svg{width:14px;height:14px;fill:none;stroke:var(--green);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;transition:stroke .2s}
+.detail-toggle:hover .arrow{background:var(--green);border-color:var(--green)}
+.detail-toggle:hover .arrow svg{stroke:#fff}
+.detail-toggle[aria-expanded="true"] .arrow{transform:rotate(180deg)}
+.details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding-top:14px}
+.d-item{display:flex;align-items:center;gap:11px;padding:12px;background:linear-gradient(135deg,#f4fbf7,#fff);border:1px solid #d9eadf;border-radius:13px;box-shadow:0 3px 10px #143e2a0a;transform:translateY(28px);opacity:0;transition:transform .55s cubic-bezier(.2,.8,.2,1),opacity .45s ease;transition-delay:calc(var(--i)*70ms)}
+#detailsWrap:not(.closed) .d-item{transform:none;opacity:1}
+.d-icon{width:38px;height:38px;border-radius:11px;background:#e1f3e8;display:grid;place-items:center;font-size:19px;flex:none}
+.d-text{min-width:0}
+.d-label{display:block;font-size:11.5px;color:#73847a;line-height:1.4}
+.d-text b{display:block;font-family:"Noto Serif Bengali","Hind Siliguri",serif;font-size:15px;font-weight:700;color:#07583f;line-height:1.45;overflow-wrap:anywhere}
+@media(max-width:420px){.details{grid-template-columns:1fr}}
+.job-note{font-size:13px;color:#52675c;margin-top:12px}
+.info-box{margin-top:12px;border:1px solid #d9eadf;border-radius:14px;background:linear-gradient(135deg,#f4fbf7,#fff);box-shadow:0 3px 10px #143e2a0a;overflow:hidden;transform:translateY(28px);opacity:0;transition:transform .55s cubic-bezier(.2,.8,.2,1),opacity .45s ease;transition-delay:560ms}
+#detailsWrap:not(.closed) .info-box{transform:none;opacity:1}
+.info-sec{padding:14px 15px}
+.info-sec+.info-sec{border-top:1px dashed #c3dccb}
+.info-label{font-size:12.5px;font-weight:700;color:#5d7167;margin-bottom:6px}
+.info-big{font-family:"Noto Serif Bengali","Hind Siliguri",serif;font-size:clamp(22px,5.5vw,28px);font-weight:700;color:#086345;line-height:1.35}
+.info-sub{font-size:13px;color:#52675c;margin-top:2px}
+.info-sub b{font-family:"Noto Serif Bengali","Hind Siliguri",serif;color:#07583f}
+.cal-list{display:grid;gap:9px;margin-top:2px}
+.cal-row{display:flex;align-items:center;gap:11px}
+.cal-tag{flex:none;width:58px;text-align:center;font-size:12px;font-weight:700;color:var(--green-dark);background:#dff1e7;border-radius:30px;padding:2px 0}
+.cal-row b{font-family:"Noto Serif Bengali","Hind Siliguri",serif;font-size:15px;font-weight:700;color:#07583f;line-height:1.5}
+.cal-note{font-size:11.5px;color:#8a9991;margin-top:10px;line-height:1.5}
+@media(max-width:620px){.asof-row.open{flex-direction:column;gap:6px}.asof-row.open .switch-wrap{max-width:none;min-height:40px}.switch-wrap{max-width:150px;font-size:12px}}
+@media(max-width:520px){.page{padding:12px 11px 30px}.date-row{gap:7px}.date-row select{padding:8px 5px;font-size:13px}.actions{grid-template-columns:1fr 1fr}.actions .reset{grid-column:1/-1}.job-fields{grid-template-columns:1fr 1fr}.panel{border-radius:15px}}
+.panel{border-top:4px solid var(--green)}
+select{appearance:none;-webkit-appearance:none;padding-right:30px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' fill='none' stroke='%23087653' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 11px center/12px}
+@media(max-width:520px){.date-row select{padding:8px 20px 8px 7px;background-position:right 6px center;background-size:10px}}
+.hint{font-size:12px}
+.primary{background:linear-gradient(135deg,#0a8a62,#07583f);box-shadow:0 6px 16px #07583f40}
+.primary:hover{background:linear-gradient(135deg,#087653,#06493a);transform:translateY(-1px)}
+.btn:focus-visible,.contact-main:focus-visible,.detail-toggle:focus-visible,.subscribe:focus-visible,.service-cta:focus-visible,.brand:focus-visible{outline:3px solid #08765366;outline-offset:2px}
+.result.show{animation:rise .35s ease-out}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}}
+.age-tiles{display:flex;justify-content:center;gap:10px;margin-top:10px}
+.tile{min-width:86px;padding:10px 8px;border-radius:14px;background:#fff;border:1px solid #cfe6d8;box-shadow:0 3px 10px #143e2a0f;line-height:1.2;color:#086345;transition:background .2s,color .2s,border-color .2s,transform .2s}
+.tile:hover{background:var(--green);border-color:var(--green);color:#fff;transform:translateY(-2px)}
+.tile b{display:block;font-family:"Noto Serif Bengali","Hind Siliguri",serif;font-size:clamp(26px,7.5vw,38px);font-weight:700;color:inherit}
+.tile span{font-size:13px;opacity:.85}
+.job-result{font-weight:600;line-height:1.7}
+/* বইয়ের মতো ফন্ট: ড্রপডাউন ও নির্বাচিত মান দুটোতেই একই */
+select,select option{font-family:"Noto Serif Bengali","Hind Siliguri",serif;font-weight:500;font-size:15px;color:#1d3a2e;letter-spacing:.1px}
+select option:disabled{color:#8a9991}
+@media(max-width:520px){.date-row select{font-size:13.5px}}
+/* বর্তমান বয়স লেবেল */
+.result-top .age-badge{display:inline-flex;align-items:center;gap:9px;padding:6px 20px;border-radius:40px;background:linear-gradient(135deg,#0a8a62,#07583f);color:#fff;font-family:"Noto Serif Bengali","Hind Siliguri",serif;font-size:clamp(15px,4vw,18px);font-weight:700;letter-spacing:.2px;box-shadow:0 6px 16px #07583f40,inset 0 1px 0 #ffffff30;border:2px solid #fff;outline:1px solid #b9dcc8}
+.result-top .age-badge::before{content:"🎂";font-size:1.1em}
+.result-top .age-badge::after{content:"✨";font-size:1em}
+.tile span{font-size:16px;font-weight:600;opacity:.92}
+/* কম্প্যাক্ট তথ্য বক্স + লাইভ ঘড়ি */
+.info-box{margin-top:10px;border-radius:13px}
+.info-top{display:grid;grid-template-columns:1fr auto;align-items:stretch}
+.info-top .info-sec{padding:9px 14px}
+.info-top .info-label{margin-bottom:2px;font-size:12px}
+.info-top .info-big{font-size:clamp(20px,5vw,25px);line-height:1.3}
+.info-top .info-sub{font-size:12.5px;margin-top:0}
+.clock-box{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;min-width:158px;padding:9px 14px;border-left:1px dashed #c3dccb;background:linear-gradient(135deg,#eaf7ef,#f7fcf8)}
+.clock-label{font-size:12px;font-weight:700;color:#5d7167}
+.clock-time{font-family:"Noto Serif Bengali","Hind Siliguri",serif;font-size:clamp(19px,4.8vw,24px);font-weight:700;color:#086345;line-height:1.35;white-space:nowrap}
+.clock-time small{font-family:"Hind Siliguri",sans-serif;font-size:11.5px;font-weight:700;background:var(--green);color:#fff;border-radius:6px;padding:1px 6px;margin-left:5px;vertical-align:middle}
+.info-sec.cal{border-top:1px dashed #c3dccb;padding:8px 14px 9px}
+.cal-list{gap:4px;margin-top:0}
+.cal-row{gap:9px}
+.cal-row b{font-size:14px;line-height:1.4}
+.cal-tag{width:52px;font-size:11.5px;padding:0}
+.info-sec.cal .info-label{margin-bottom:4px;font-size:12px}
+.cal-note{font-size:11px;margin-top:6px;line-height:1.4}
+@media(max-width:420px){.clock-box{min-width:122px;padding:8px 9px}.info-top .info-sec{padding:8px 10px}.clock-time small{display:block;margin:2px auto 0;width:max-content}}
+@media print{.clock-box{display:none!important}.info-top{grid-template-columns:1fr}}
+/* স্ক্রল হওয়া উপদেশ বাণী */
+.quote-bar{position:relative;height:50px;margin:16px 0 4px;overflow:hidden;border-radius:13px;border:1px solid #cfe4d7;background:linear-gradient(135deg,#eaf7ef,#f7fcf8);box-shadow:0 3px 10px #143e2a0a}
+.quote-line{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:0 14px;text-align:center;font-family:"Noto Serif Bengali","Hind Siliguri",serif;font-weight:700;font-size:clamp(14.5px,4vw,18px);line-height:1.4;color:#07583f;transform:translateY(100%);opacity:0;transition:transform .6s cubic-bezier(.2,.8,.2,1),opacity .5s ease}
+.quote-line.active{transform:none;opacity:1}
+.quote-line.out{transform:translateY(-100%);opacity:0}
+@media print{.quote-bar{display:none!important}}
+/* সব জায়গায় অংকের ফন্ট বইয়ের মতো */
+.n{font-family:"Noto Serif Bengali","Hind Siliguri",serif;font-weight:700;font-size:1.05em}
+.readonly-date{font-family:"Noto Serif Bengali","Hind Siliguri",serif;font-weight:500;font-size:15px}
+/* বয়সসীমার ঘরে ড্রপ বক্সের মতো বইয়ের ফন্ট */
+.age-input,input.age-input{font-family:"Noto Serif Bengali","Hind Siliguri",serif;font-weight:600;font-size:17px;color:#1d3a2e;letter-spacing:.2px}
+.age-input::placeholder{font-family:"Noto Serif Bengali","Hind Siliguri",serif;font-weight:400;font-size:15px;color:#9aa8a0;opacity:1}
+/* কাস্টম তারিখ টগলের লেখা আরও স্পষ্ট */
+.switch-wrap{max-width:230px;padding:7px 12px 7px 10px;border:1px solid #bfdccb;border-radius:12px;background:linear-gradient(135deg,#eaf7ef,#f7fcf8);font-size:14.5px;font-weight:700;line-height:1.35;color:#053f2d;box-shadow:0 2px 8px #07583f14;transition:background .2s,border-color .2s}
+.switch-wrap:hover{background:#e0f2e7;border-color:#9bcdb0}
+.switch-wrap:has(input:checked){background:#d6eede;border-color:#6fb48f}
+@media(max-width:620px){.switch-wrap{max-width:none;width:100%;font-size:14px}.asof-row{flex-direction:column;gap:8px}.asof-row .switch-wrap{min-height:44px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{
+  @page{size:A4;margin:12mm}
+  body{background:#fff;font-size:11pt;line-height:1.35}
+  .page{max-width:100%;padding:0}
+  .brand,header p,.service-card,.promo,.actions,.contact-wrap,footer,.detail-toggle,.hint,.option-line,.optional-box{display:none!important}
+  .panel{box-shadow:none;border:0;border-radius:0;padding:0}
+  header h1{font-size:16pt;margin:0 0 12px;text-align:left}
+  .result{display:block!important;margin-top:14px;border:1px solid #bbb}
+  .result-top{padding:12px}
+  .tile{box-shadow:none}.tile b{font-size:20pt}.tile:first-child{background:#fff!important;color:#000!important;border-color:#bbb}.tile:not(:first-child) b{color:#000}
+  .result-body{padding:12px}
+  #detailsWrap.collapse.closed{grid-template-rows:1fr!important}
+  #detailsWrap.collapse.closed>div{opacity:1!important;visibility:visible!important}
+  #detailsWrap .d-item,#detailsWrap .info-box{opacity:1!important;transform:none!important;background:#fff;box-shadow:none}
+  .details{margin-top:8px}
+}
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+  <a class="brand" href="https://www.youtube.com/@bdjobcircular247" target="_blank" rel="noopener" aria-label="Job Circular & Apply YouTube চ্যানেল ভিজিট করুন"><span class="brand-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8Z"/><path fill="#087653" d="m9.6 15.6 6.2-3.6-6.2-3.6z"/></svg></span><span>Job Circular &amp; Apply</span></a>
+  <h1>বয়স ক্যালকুলেটর</h1>
+  <p>আপনার সঠিক বয়স হিসাব করুন এবং চাকরির বয়সসীমা যাচাই করুন</p>
+</header>
+
+<main class="panel">
+  <div>
+    <label class="field-label" for="birthYear">জন্মতারিখ নির্বাচন করুন</label><div class="hint" style="margin:-5px 0 8px">প্রথমে বছর, এরপর মাস ও দিন নির্বাচন করুন</div>
+    <div class="date-row">
+      <select id="birthYear" aria-label="জন্মের বছর"></select>
+      <select id="birthMonth" aria-label="জন্মের মাস"></select>
+      <select id="birthDay" aria-label="জন্মের দিন"></select>
+    </div>
+  </div>
+
+  <div style="margin-top:19px">
+    <div class="field-label">হিসাবের তারিখ</div>
+    <div class="asof-row" id="asofRow">
+      <div class="asof-main">
+        <div class="collapse" id="todayWrap"><div><div class="readonly-date" id="todayDisplay">লোড হচ্ছে…</div></div></div>
+        <div class="collapse closed" id="customWrap"><div>
+          <div class="date-row">
+            <select id="asYear" aria-label="হিসাবের বছর"></select>
+            <select id="asMonth" aria-label="হিসাবের মাস"></select>
+            <select id="asDay" aria-label="হিসাবের দিন"></select>
+          </div>
+        </div></div>
+      </div>
+      <label class="switch-wrap"><input type="checkbox" id="customDateToggle"><span class="switch" aria-hidden="true"></span><span class="switch-text">নিজের পছন্দমতো তারিখ নির্বাচন করুন</span></label>
+    </div>
+  </div>
+
+  <div class="optional-box">
+    <label class="optional-head"><input type="checkbox" id="jobToggle"><span><strong>চাকরির বয়সসীমা যাচাই</strong></span></label>
+    <div class="collapse closed" id="jobWrap"><div>
+      <div class="job-note">সর্বনিম্ন অথবা সর্বোচ্চ—যেকোনো একটি বা দুটিই বসাতে পারেন (ঐচ্ছিক)</div>
+      <div class="job-fields" id="jobFields">
+        <div><label class="field-label" for="minAge">সর্বনিম্ন বয়স</label><input type="text" class="age-input" inputmode="numeric" maxlength="3" autocomplete="off" id="minAge" placeholder="যেমন: ১৮"></div>
+        <div><label class="field-label" for="maxAge">সর্বোচ্চ বয়স</label><input type="text" class="age-input" inputmode="numeric" maxlength="3" autocomplete="off" id="maxAge" placeholder="যেমন: ৩২"></div>
+      </div>
+    </div></div>
+  </div>
+
+  <div class="error" id="errorBox" role="alert"></div>
+  <div class="actions">
+    <button class="btn primary" id="calculateBtn">হিসাব করুন</button>
+    <button class="btn secondary" id="printBtn">প্রিন্ট করুন</button>
+    <button class="btn reset" id="resetBtn">রিসেট</button>
+  </div>
+
+  <section class="result" id="result" aria-live="polite">
+    <div class="result-top"><div class="small age-badge" id="ageLabel">আপনার বর্তমান বয়স</div><div class="age-tiles"><div class="tile"><b id="ageY">০</b><span>বছর</span></div><div class="tile"><b id="ageM">০</b><span>মাস</span></div><div class="tile"><b id="ageD">০</b><span>দিন</span></div></div></div>
+    <div class="result-body">
+      <div id="jobResult" class="job-result" style="display:none"></div>
+      <button class="detail-toggle" id="detailToggle" aria-expanded="false"><span id="detailText">বিস্তারিত দেখুন</span><span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></button>
+      <div class="collapse closed" id="detailsWrap"><div>
+        <div class="details" id="details">
+          <div class="d-item" style="--i:0"><span class="d-icon">🎈</span><span class="d-text"><span class="d-label">জন্মতারিখ</span><b id="birthDate">—</b></span></div>
+          <div class="d-item" style="--i:1"><span class="d-icon">📅</span><span class="d-text"><span class="d-label">জন্মবার</span><b id="birthWeekday">—</b></span></div>
+          <div class="d-item" style="--i:2"><span class="d-icon">⏱️</span><span class="d-text"><span class="d-label">মোট সেকেন্ড</span><b id="totalSeconds">—</b></span></div>
+          <div class="d-item" style="--i:3"><span class="d-icon">⏰</span><span class="d-text"><span class="d-label">মোট ঘন্টা</span><b id="totalHours">—</b></span></div>
+          <div class="d-item" style="--i:4"><span class="d-icon">🗓️</span><span class="d-text"><span class="d-label">মোট দিন</span><b id="totalDays">—</b></span></div>
+          <div class="d-item" style="--i:5"><span class="d-icon">📊</span><span class="d-text"><span class="d-label">মোট সপ্তাহ</span><b id="totalWeeks">—</b></span></div>
+          <div class="d-item" style="--i:6"><span class="d-icon">📆</span><span class="d-text"><span class="d-label">মোট মাস</span><b id="totalMonths">—</b></span></div>
+          <div class="d-item" style="--i:7"><span class="d-icon">🌟</span><span class="d-text"><span class="d-label">মোট বছর</span><b id="totalYears">—</b></span></div>
+        </div>
+        <div class="info-box">
+          <div class="info-top">
+            <div class="info-sec">
+              <div class="info-label">⏳ পরবর্তী জন্মদিনে বাকি</div>
+              <div class="info-big" id="daysToBirthday">—</div>
+              <div class="info-sub">🎂 পরবর্তী জন্মদিন: <b id="nextBirthday">—</b></div>
+            </div>
+            <div class="clock-box" aria-label="লাইভ ঘড়ি">
+              <div class="clock-label">🕒 এখনকার সময়</div>
+              <div class="clock-time" id="liveClock">—</div>
+            </div>
+          </div>
+          <div class="info-sec cal">
+            <div class="info-label">🧮 হিসাবের তারিখ</div>
+            <div class="cal-list">
+              <div class="cal-row"><span class="cal-tag">ইংরেজি</span><b id="calcEn">—</b></div>
+              <div class="cal-row"><span class="cal-tag">বাংলা</span><b id="calcBn">—</b></div>
+              <div class="cal-row"><span class="cal-tag">আরবি</span><b id="calcAr">—</b></div>
+            </div>
+            <div class="cal-note">বাংলা তারিখ বাংলাদেশের সংশোধিত পঞ্জিকা অনুযায়ী। আরবি তারিখ গণনাভিত্তিক, চাঁদ দেখার উপর ১ দিন আগে-পরে হতে পারে।</div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+  </section>
+</main>
+
+<section class="promo">
+  <p>চলমান সরকারি ও বেসরকারি চাকরির নিয়োগ বিজ্ঞপ্তি দেখতে আমাদের YouTube চ্যানেল ভিজিট করুন।</p>
+  <div class="subscribe-row">
+    <a class="subscribe" href="https://www.youtube.com/@bdjobcircular247?sub_confirmation=1" target="_blank" rel="noopener">Subscribe</a>
+    <div class="contact-wrap">
+      <button class="contact-main help-button" id="contactButton" aria-label="চ্যাট ও যোগাযোগের লিংক" title="যোগাযোগ" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="M4 14v-2a8 8 0 0 1 16 0v2"/>
+  <rect x="2.8" y="13" width="3.8" height="6" rx="1.8" fill="currentColor"/>
+  <rect x="17.4" y="13" width="3.8" height="6" rx="1.8" fill="currentColor"/>
+  <path d="M19.3 19v.4a2.6 2.6 0 0 1-2.6 2.6h-3.2"/>
+  <circle cx="12.3" cy="22" r="1" fill="currentColor" stroke="none"/>
+</svg></button>
+      <div class="contact-menu" id="contactMenu">
+    <div class="menu-title">যোগাযোগ করুন</div>
+    <a href="https://wa.me/8801965684142" target="_blank" rel="noopener">
+      <span class="social-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#25D366"/><g transform="translate(4.8 4.8) scale(.6)"><path fill="#fff" d="M20.5 3.5A11.8 11.8 0 0 0 2 17.7L.5 23.5l5.9-1.5A11.8 11.8 0 0 0 20.5 3.5Zm-8.4 16.1c-1 0-2-.2-2.9-.7l-.2-.1-3.5.9.9-3.4-.1-.2a8.7 8.7 0 1 1 5.8 3.5Zm4.8-6.5c-.3-.2-1.6-.8-1.9-.9-.3-.1-.5-.2-.7.2-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.2-1.4-.8-.7-1.4-1.6-1.5-1.9-.2-.3 0-.4.1-.6l.5-.6c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.2-.7-1.6-.9-2.1-.2-.5-.5-.4-.7-.4h-.6c-.2 0-.5.1-.8.4-.3.3-1.1 1.1-1.1 2.6s1.1 3 1.3 3.2c.2.2 2.2 3.4 5.4 4.7.8.3 1.4.5 1.8.6.8.2 1.5.2 2 .1.6-.1 1.6-.7 1.8-1.3.2-.6.2-1.2.1-1.3-.1-.1-.3-.2-.6-.4Z"/></g></svg></span> WhatsApp
+    </a>
+    <a href="https://m.me/mdalihosen125f" target="_blank" rel="noopener">
+      <span class="social-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#0866FF" d="M12 1C5.9 1 1 5.5 1 11.2c0 3.2 1.6 6 4.2 7.9V23l3.8-2.1c1 .3 2 .5 3 .5 6.1 0 11-4.5 11-10.2S18.1 1 12 1Z"/><path fill="#fff" d="m5.8 14.8 4.2-4.5 2.8 2.1 4.5-2.1-4.2 4.5-2.8-2.1z"/></svg></span> Messenger
+    </a>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="service-card">
+  <span class="service-kicker">আবেদন সহায়তা</span>
+  <h2>চাকরির আবেদন করতে কি সাহায্য প্রয়োজন?</h2>
+  <p>অনলাইনে চাকরির আবেদন করতে সমস্যা হলে আমরা আপনার আবেদনটি যত্নসহকারে করে দিচ্ছি। সেবা গ্রহণে ন্যূনতম সার্ভিস চার্জ প্রযোজ্য।</p>
+  <a href="https://wa.me/8801965684142" target="_blank" rel="noopener" class="service-cta">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.5 3.5A11.8 11.8 0 0 0 2 17.7L.5 23.5l5.9-1.5A11.8 11.8 0 0 0 20.5 3.5Zm-8.4 16.1c-1 0-2-.2-2.9-.7l-.2-.1-3.5.9.9-3.4-.1-.2a8.7 8.7 0 1 1 5.8 3.5Zm4.8-6.5c-.3-.2-1.6-.8-1.9-.9-.3-.1-.5-.2-.7.2-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.2-1.4-.8-.7-1.4-1.6-1.5-1.9-.2-.3 0-.4.1-.6l.5-.6c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.2-.7-1.6-.9-2.1-.2-.5-.5-.4-.7-.4h-.6c-.2 0-.5.1-.8.4-.3.3-1.1 1.1-1.1 2.6s1.1 3 1.3 3.2c.2.2 2.2 3.4 5.4 4.7.8.3 1.4.5 1.8.6.8.2 1.5.2 2 .1.6-.1 1.6-.7 1.8-1.3.2-.6.2-1.2.1-1.3-.1-.1-.3-.2-.6-.4Z"/></svg>
+    WhatsApp-এ যোগাযোগ করুন: 01965684142
+  </a>
+</section>
+
+
+
+
+
+
+
+<div class="quote-bar" id="quoteBar" aria-live="off"></div>
+
+<footer>© Job Circular &amp; Apply. সর্বস্বত্ব সংরক্ষিত।</footer>
+</div>
+
+<script>
+(() => {
+ const $ = id => document.getElementById(id);
+ const monthsBn = ['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
+ const weekdaysBn = ['রবিবার','সোমবার','মঙ্গলবার','বুধবার','বৃহস্পতিবার','শুক্রবার','শনিবার'];
+ const bn = n => String(n).replace(/\d/g, d => '০১২৩৪৫৬৭৮৯'[d]);
+ const en = str => String(str).replace(/[০-৯]/g,d=>'০১২৩৪৫৬৭৮৯'.indexOf(d));
+ const makeLocalDate = (y,m,d) => new Date(y,m-1,d,12,0,0,0);
+ const daysInMonth = (y,m) => new Date(y,m,0).getDate();
+ const formatDate = d => `${bn(d.getDate())} ${monthsBn[d.getMonth()]} ${bn(d.getFullYear())}`;
+ const today = () => {
+   const parts = new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Dhaka',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
+   const v={}; parts.forEach(p=>{if(p.type!=='literal')v[p.type]=Number(p.value)});
+   return makeLocalDate(v.year,v.month,v.day);
+ };
+ const currentYear = today().getFullYear();
+ function addPlaceholder(sel, label) {
+   const o=document.createElement('option');o.value='';o.textContent=label;o.selected=true;o.disabled=true;sel.appendChild(o);
+ }
+ function fillYear(sel, start, end, selected) {
+   sel.innerHTML='';addPlaceholder(sel,'বছর');
+   for(let y=end;y>=start;y--){const o=document.createElement('option');o.value=y;o.textContent=bn(y);if(y===selected)o.selected=true;sel.appendChild(o);}
+ }
+ function fillMonths(sel, selected=0) {
+   sel.innerHTML='';addPlaceholder(sel,'মাস');
+   monthsBn.forEach((m,i)=>{const o=document.createElement('option');o.value=i+1;o.textContent=m;if(i+1===selected)o.selected=true;sel.appendChild(o);});
+ }
+ function fillDays(sel,y,m,selected=0) {
+   sel.innerHTML='';addPlaceholder(sel,'দিন');
+   if(!y||!m)return;
+   const max=daysInMonth(y,m);
+   for(let d=1;d<=max;d++){const o=document.createElement('option');o.value=d;o.textContent=bn(d);if(d===selected)o.selected=true;sel.appendChild(o);}
+ }
+ function setupDate(prefix) {
+   const ys=$(prefix+'Year'),ms=$(prefix+'Month'),ds=$(prefix+'Day');
+   fillYear(ys,prefix==='as'?1990:1950,prefix==='as'?2035:currentYear,0);fillMonths(ms,0);fillDays(ds,0,0,0);
+   const refresh=()=>fillDays(ds,+ys.value,+ms.value,+ds.value||0);
+   ys.addEventListener('change',refresh);
+   ms.addEventListener('change',refresh);
+ }
+ const now=today(); $('todayDisplay').textContent=formatDate(now);
+ const clockEl=$('liveClock');
+ const clockFmt=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Dhaka',hour:'numeric',minute:'2-digit',second:'2-digit',hour12:true});
+ function tick(){
+   const p={};clockFmt.formatToParts(new Date()).forEach(x=>{p[x.type]=x.value});
+   clockEl.innerHTML=`${bn(String(p.hour).padStart(2,'0'))}:${bn(p.minute)}:${bn(p.second)}<small>${p.dayPeriod}</small>`;
+ }
+ tick();setInterval(tick,1000);
+ const quotes=['নামাজ কায়েম করো।','সময় ফুরিয়ে যাচ্ছে।','জীবনের প্রতি এখনই যত্নশীল হও।','সময় ও স্রোত কারো জন্য অপেক্ষা করে না।'];
+ const quoteBar=$('quoteBar'),quoteEls=quotes.map(t=>{const d=document.createElement('div');d.className='quote-line';d.textContent=t;quoteBar.appendChild(d);return d;});
+ let qi=0;quoteEls[0].classList.add('active');
+ setInterval(()=>{
+   const cur=quoteEls[qi];qi=(qi+1)%quoteEls.length;const next=quoteEls[qi];
+   next.style.transition='none';next.className='quote-line';void next.offsetHeight;next.style.transition='';
+   cur.className='quote-line out';next.classList.add('active');
+ },3000);
+ setupDate('birth');setupDate('as');
+  function setCustom(on){
+   $('todayWrap').classList.toggle('closed',on);
+   $('customWrap').classList.toggle('closed',!on);
+   $('asofRow').classList.toggle('open',on);
+ }
+ $('customDateToggle').addEventListener('change',e=>setCustom(e.target.checked));
+ $('jobToggle').addEventListener('change',e=>$('jobWrap').classList.toggle('closed',!e.target.checked));
+ ['minAge','maxAge'].forEach(id=>$(id).addEventListener('input',e=>{e.target.value=bn(en(e.target.value).replace(/\D/g,'').slice(0,3));}));
+ function getDate(prefix){
+   const y=$(`${prefix}Year`).value,m=$(`${prefix}Month`).value,d=$(`${prefix}Day`).value;
+   if(!y||!m||!d)return null;
+   return makeLocalDate(+y,+m,+d);
+ }
+ function addYearsClamped(date,years){const y=date.getFullYear()+years,m=date.getMonth()+1,d=Math.min(date.getDate(),daysInMonth(y,m));return makeLocalDate(y,m,d);}
+ function addMonthsClamped(date,n){const t=date.getMonth()+n,y=date.getFullYear()+Math.floor(t/12),m=((t%12)+12)%12+1;return makeLocalDate(y,m,Math.min(date.getDate(),daysInMonth(y,m)));}
+ function diffYMD(start,end){
+   let tm=(end.getFullYear()-start.getFullYear())*12+end.getMonth()-start.getMonth();
+   if(addMonthsClamped(start,tm)>end)tm--;
+   return {y:Math.floor(tm/12),m:tm%12,d:diffDays(addMonthsClamped(start,tm),end)};
+ }
+ function diffDays(a,b){return Math.round((b-a)/86400000);}
+ function bookDigits(root){
+   const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),nodes=[];
+   while(w.nextNode())nodes.push(w.currentNode);
+   nodes.forEach(t=>{
+     const p=t.parentNode;
+     if(!/[০-৯]/.test(t.nodeValue)||p.closest('.n,b,.tile,.clock-time,.info-big'))return;
+     const f=document.createDocumentFragment();
+     t.nodeValue.split(/([০-৯]+)/).forEach(s=>{
+       if(!s)return;
+       if(/^[০-৯]+$/.test(s)){const e=document.createElement('span');e.className='n';e.textContent=s;f.appendChild(e);}
+       else f.appendChild(document.createTextNode(s));
+     });
+     p.replaceChild(f,t);
+   });
+ }
+ function showError(msg){$('errorBox').textContent=msg;bookDigits($('errorBox'));$('errorBox').classList.add('show');$('result').classList.remove('show');}
+ const banglaMonths=['বৈশাখ','জ্যৈষ্ঠ','আষাঢ়','শ্রাবণ','ভাদ্র','আশ্বিন','কার্তিক','অগ্রহায়ণ','পৌষ','মাঘ','ফাল্গুন','চৈত্র'];
+ const banglaStarts=[[1,14,9],[2,13,10],[3,15,11],[4,14,0],[5,15,1],[6,15,2],[7,16,3],[8,16,4],[9,16,5],[10,16,6],[11,15,7],[12,15,8]];
+ function banglaDate(date){
+   const y=date.getFullYear(),key=(date.getMonth()+1)*100+date.getDate();
+   let st=null;
+   for(const b of banglaStarts){if(b[0]*100+b[1]<=key)st=b;}
+   let startYear=y,mi;
+   if(!st){st=banglaStarts[banglaStarts.length-1];startYear=y-1;}
+   mi=st[2];
+   const day=diffDays(makeLocalDate(startYear,st[0],st[1]),date)+1;
+   const by=key>=414?y-593:y-594;
+   return `${bn(day)} ${banglaMonths[mi]} ${bn(by)} বঙ্গাব্দ`;
+ }
+ const hijriMonths=['মুহাররম','সফর','রবিউল আউয়াল','রবিউস সানি','জমাদিউল আউয়াল','জমাদিউস সানি','রজব','শাবান','রমজান','শাওয়াল','জিলকদ','জিলহজ'];
+ function hijriDate(date){
+   try{
+     const parts=new Intl.DateTimeFormat('en-u-ca-islamic-civil',{year:'numeric',month:'numeric',day:'numeric',timeZone:'UTC'}).formatToParts(new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate(),12)));
+     const v={};parts.forEach(p=>{v[p.type]=p.value});
+     const m=Number(v.month),d=Number(v.day),yr=Number(v.year);
+     if(!m||!d||!yr)return '';
+     return `${bn(d)} ${hijriMonths[m-1]} ${bn(yr)} হিজরি`;
+   }catch(e){return '';}
+ }
+ function calculate(){
+   $('errorBox').classList.remove('show');
+   const birth=getDate('birth'), asof=$('customDateToggle').checked?getDate('as'):now;
+   if(!birth){showError('জন্মতারিখ নির্বাচন করুন: বছর, মাস ও দিন।');return;}
+   if(!asof){showError('হিসাবের তারিখ নির্বাচন করুন: বছর, মাস ও দিন।');return;}
+   if(birth<makeLocalDate(1950,1,1)||birth>asof){showError('সঠিক জন্মতারিখ নির্বাচন করুন। জন্মতারিখ ১৯৫০ সাল বা তার পরের এবং হিসাবের তারিখের সমান/আগের হতে হবে।');return;}
+   const age=diffYMD(birth,asof);
+   $('ageY').textContent=bn(age.y);$('ageM').textContent=bn(age.m);$('ageD').textContent=bn(age.d);
+   $('ageLabel').textContent=$('customDateToggle').checked?'হিসাবের তারিখে আপনার বয়স':'আপনার বর্তমান বয়স';
+   const nf=n=>bn(Number(n).toLocaleString('en-IN'));
+   const totalDaysN=diffDays(birth,asof);
+   $('birthDate').textContent=formatDate(birth);
+   $('birthWeekday').textContent=weekdaysBn[birth.getDay()];
+   $('totalSeconds').textContent=nf(totalDaysN*86400)+' সেকেন্ড';
+   $('totalHours').textContent=nf(totalDaysN*24)+' ঘন্টা';
+   $('totalDays').textContent=nf(totalDaysN)+' দিন';
+   $('totalWeeks').textContent=nf(Math.floor(totalDaysN/7))+' সপ্তাহ';
+   $('totalMonths').textContent=nf(age.y*12+age.m)+' মাস';
+   $('totalYears').textContent=nf(age.y)+' বছর';
+   let next=makeLocalDate(asof.getFullYear(),birth.getMonth()+1,Math.min(birth.getDate(),daysInMonth(asof.getFullYear(),birth.getMonth()+1)));
+   if(next<asof){const ny=asof.getFullYear()+1;next=makeLocalDate(ny,birth.getMonth()+1,Math.min(birth.getDate(),daysInMonth(ny,birth.getMonth()+1)));}
+   $('nextBirthday').textContent=formatDate(next);{const dtb=diffDays(asof,next);$('daysToBirthday').textContent=dtb===0?'আজই! 🎉':bn(dtb)+' দিন';}
+   $('calcEn').textContent=formatDate(asof)+' খ্রিষ্টাব্দ';
+   $('calcBn').textContent=banglaDate(asof);
+   $('calcAr').textContent=hijriDate(asof)||'—';
+   const jr=$('jobResult');jr.style.display='none';jr.className='job-result';
+   if($('jobToggle').checked){
+     const minRaw=en($('minAge').value).trim(), maxRaw=en($('maxAge').value).trim();
+     const hasMin=minRaw!=='', hasMax=maxRaw!=='';
+     const min=hasMin?Number(minRaw):null, max=hasMax?Number(maxRaw):null;
+     if(!hasMin&&!hasMax){showError('সর্বনিম্ন অথবা সর্বোচ্চ বয়সের অন্তত একটি লিখুন।');return;}
+     if((hasMin&&(!Number.isInteger(min)||min<1||min>100))||(hasMax&&(!Number.isInteger(max)||max<1||max>100))||(hasMin&&hasMax&&min>max)){
+       showError('বয়সসীমার ঘরে সঠিক সংখ্যা লিখুন। সর্বনিম্ন বয়স সর্বোচ্চ বয়সের বেশি হতে পারবে না।');return;
+     }
+     let msg='', state='ok';
+     if(hasMin&&hasMax){
+       const minDate=addYearsClamped(birth,min),maxDate=addYearsClamped(birth,max);
+       if(asof<minDate){const remain=diffYMD(asof,minDate);msg=`সর্বনিম্ন ${bn(min)} বছর বয়স পূর্ণ হতে বাকি: ${bn(remain.y)} বছর ${bn(remain.m)} মাস ${bn(remain.d)} দিন।`;state='wait';}
+       else if(asof>maxDate){const over=diffYMD(maxDate,asof);msg=`সর্বোচ্চ ${bn(max)} বছর বয়সসীমা অতিক্রম হয়েছে: ${bn(over.y)} বছর ${bn(over.m)} মাস ${bn(over.d)} দিন আগে।`;state='bad';}
+       else {const remain=diffYMD(asof,maxDate);msg=`আপনি নির্ধারিত বয়সসীমার মধ্যে আছেন। সর্বোচ্চ বয়সসীমা শেষ হতে বাকি: ${bn(remain.y)} বছর ${bn(remain.m)} মাস ${bn(remain.d)} দিন।`;state='ok';}
+     } else if(hasMin){
+       const minDate=addYearsClamped(birth,min);
+       if(asof<minDate){const remain=diffYMD(asof,minDate);msg=`আপনার সর্বনিম্ন ${bn(min)} বছর বয়স এখনো পূর্ণ হয়নি। পূর্ণ হতে বাকি: ${bn(remain.y)} বছর ${bn(remain.m)} মাস ${bn(remain.d)} দিন।`;state='wait';}
+       else {msg=`আপনার বয়স সর্বনিম্ন ${bn(min)} বছর পূর্ণ হয়েছে।`;state='ok';}
+     } else {
+       const maxDate=addYearsClamped(birth,max);
+       if(asof>maxDate){const over=diffYMD(maxDate,asof);msg=`আপনি সর্বোচ্চ ${bn(max)} বছর বয়সসীমা অতিক্রম করেছেন: ${bn(over.y)} বছর ${bn(over.m)} মাস ${bn(over.d)} দিন আগে।`;state='bad';}
+       else {const remain=diffYMD(asof,maxDate);msg=`আপনি সর্বোচ্চ ${bn(max)} বছর বয়সসীমার মধ্যে আছেন। বয়সসীমা শেষ হতে বাকি: ${bn(remain.y)} বছর ${bn(remain.m)} মাস ${bn(remain.d)} দিন।`;state='ok';}
+     }
+     jr.textContent=({ok:'✅ ',wait:'⏳ ',bad:'⚠️ '})[state]+msg;bookDigits(jr);jr.style.display='block';jr.classList.add(state);
+   }
+   closeDetails();
+   $('result').classList.add('show');
+   $('result').scrollIntoView({behavior:'smooth',block:'nearest'});
+ }
+ $('calculateBtn').addEventListener('click',calculate);
+ $('printBtn').addEventListener('click',()=>{if(!$('result').classList.contains('show'))calculate();if($('result').classList.contains('show'))window.print();});
+ function closeDetails(){$('detailsWrap').classList.add('closed');$('detailToggle').setAttribute('aria-expanded','false');$('detailText').textContent='বিস্তারিত দেখুন';}
+ $('detailToggle').addEventListener('click',()=>{const open=$('detailsWrap').classList.contains('closed');$('detailsWrap').classList.toggle('closed',!open);$('detailToggle').setAttribute('aria-expanded',String(open));$('detailText').textContent=open?'বিস্তারিত বন্ধ করুন':'বিস্তারিত দেখুন';});
+ $('resetBtn').addEventListener('click',()=>{
+   $('birthYear').value='';$('birthMonth').value='';fillDays($('birthDay'),0,0,0);
+   $('customDateToggle').checked=false;setCustom(false);
+   $('asYear').value='';$('asMonth').value='';fillDays($('asDay'),0,0,0);
+   $('jobToggle').checked=false;$('jobWrap').classList.add('closed');$('minAge').value='';$('maxAge').value='';
+   $('result').classList.remove('show');$('errorBox').classList.remove('show');closeDetails();
+ });
+ const contactBtn=$('contactButton'),menu=$('contactMenu');
+ function toggleMenu(){const open=menu.classList.toggle('open');contactBtn.setAttribute('aria-expanded',String(open));}
+ contactBtn.addEventListener('click',toggleMenu);
+ document.addEventListener('click',e=>{if(!e.target.closest('.contact-wrap')){menu.classList.remove('open');contactBtn.setAttribute('aria-expanded','false');}});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'){menu.classList.remove('open');contactBtn.setAttribute('aria-expanded','false');}});
+})();
+</script>
+</body>
+</html>
